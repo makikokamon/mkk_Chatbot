@@ -1,18 +1,18 @@
 import os
 import streamlit as st
-from dotenv import load_dotenv
+#from dotenv import load_dotenv
 from openai import AzureOpenAI
   
 
 # Get Configuration Settings
-load_dotenv()
+#load_dotenv()
 #ai_endpoint = os.getenv('AI_SERVICE_ENDPOINT')
 #ai_key = os.getenv('AI_SERVICE_KEY')
 #Azure OpenAI の API キーとエンドポイントを環境変数から取得  
-azure_endpoint = os.getenv('CHATBOT_AZURE_OPENAI_ENDPOINT') 
-api_key = os.getenv('CHATBOT_AZURE_OPENAI_API_KEY') 
-deployment_name = os.getenv('DEPLOYMENT_NAME')
-api_version = os.getenv('API_VERSION') 
+azure_endpoint = os.environ['CHATBOT_AZURE_OPENAI_ENDPOINT'] 
+api_key = os.environ['CHATBOT_AZURE_OPENAI_API_KEY']
+deployment_name = os.environ['DEPLOYMENT_NAME']
+api_version = os.environ['API_VERSION']
 
 # Azure OpenAI クライアントを作成  
 client = AzureOpenAI(  
@@ -30,7 +30,7 @@ if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
 
 # ユーザーからのメッセージに対して応答を生成する関数  
-def get_response(message):  
+def get_response(prompt: str = ""):  
     # ユーザーのメッセージを履歴に追加  
     st.session_state.chat_history.append({"role": "user", "content": prompt})  
     #モデルに送信するメッセージを作成、セキュリティの観点からchat_historyオブジェクトは直接渡さない
@@ -47,6 +47,7 @@ def get_response(message):
         stream=True #ストリーミング応答を有効にする
     ) 
     return response
+
 def add_history(response):
     st.session_state.chat_history.append({"role": "assistant", "content": response})
 
